@@ -1,14 +1,14 @@
-import keyboard
-import psutil
-from win32gui import GetForegroundWindow
-from win32process import GetWindowThreadProcessId
+import keyboard #used for interfacing with keybinds.
+import psutil ##Used to convert Process id to a task manager process name.
+from win32gui import GetForegroundWindow #Used for finding the raw name of the application
+from win32process import GetWindowThreadProcessId ##Used for finding the process id of an application.
 from config import settings
 
 
-class brain:
+class brain: ##Used as the "brain" of the script.
     def __init__(self):
-        self.settings = settings()
-        self.essentialprograms = self.settings.essentialprograms
+        self.settings = settings() #Initalizes the settings class from config.py.
+        self.essentialprograms = self.settings.essentialprograms #Initializes essential settings from config.py
         self.currentapp = ""
 
     def checkkeys(self):
@@ -17,24 +17,24 @@ class brain:
             self.killprocess(self.currentapp)
 
     def findapplication(self):
-        pid = GetWindowThreadProcessId(GetForegroundWindow())
-        currentapp= psutil.Process(pid[-1]).name()
+        pid = GetWindowThreadProcessId(GetForegroundWindow()) #Gets raw string from currently focused window.
+        currentapp= psutil.Process(pid[-1]).name()#Converts raw name to process id to task manager name.
         print(currentapp)
-        return psutil.Process(pid[-1]).name()
+        return currentapp
 
     def run(self):
         while True:
-            self.checkkeys()
+            self.checkkeys() #continually checks for keybinds.
 
     def killprocess(self,processname):
-        for process in psutil.process_iter():
+        for process in psutil.process_iter(): #checks list of currently running processes.
             if process.name() == processname:
-                if not (processname in self.essentialprograms):
+                if not (processname in self.essentialprograms): #ensures program name is not in settings.
                     print("ran")
-                    process.kill()
+                    process.kill() #kills the process using psustil.
                 else:
                     print("can't kill essential process!")
 
-if __name__ == "__main__":
+if __name__ == "__main__": ##main is a bit off. 
     longinus = brain()
     longinus.run()
