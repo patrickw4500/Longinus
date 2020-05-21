@@ -1,0 +1,41 @@
+from tkinter import *
+from config import settings
+
+
+def backtonormal():
+    return
+
+
+class maingui:
+    def __init__(self):
+        self.gui = Tk()
+        self.gui.title("Longinus")
+        self.consoleframe = Frame(self.gui)
+        self.consoleframe.pack(side=BOTTOM, fill=X)
+        self.consolelabel = Label(self.consoleframe, text="Console Output")
+        self.consolelabel.pack(side=TOP, fill=X)
+        self.consolemessage = "Awaiting Console Output..."
+        self.consoleoutput = Message(self.consoleframe, text=self.consolemessage, relief=SUNKEN, justify=CENTER,
+                                     aspect=10000)
+        self.consoleoutput.pack(side=BOTTOM, fill=X)
+
+    def changemessage(self, message):
+         self.consoleoutput.configure(text=message)
+         self.gui.after_cancel(self.gui)
+    def run(self):
+        while True:
+            if self.gui.winfo_exists():
+                self.gui.update()
+                self.gui.update_idletasks()
+
+    def mainloop(self):
+        self.gui.mainloop()
+
+
+if __name__ == '__main__':
+    n = maingui()
+    n.changemessage("Bruh")
+    n.changemessage("no")
+    #n.gui.after(ms=1000, func=n.changemessage(message="test"))
+    n.mainloop()
+# n.run()
