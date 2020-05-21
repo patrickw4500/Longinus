@@ -1,0 +1,40 @@
+import keyboard
+import psutil
+from win32gui import GetForegroundWindow
+from win32process import GetWindowThreadProcessId
+from config import settings
+
+
+class brain:
+    def __init__(self):
+        self.settings = settings()
+        self.essentialprograms = self.settings.essentialprograms
+        self.currentapp = ""
+
+    def checkkeys(self):
+        if keyboard.is_pressed(self.settings.hotkey):
+            self.currentapp=self.findapplication()
+            self.killprocess(self.currentapp)
+
+    def findapplication(self):
+        pid = GetWindowThreadProcessId(GetForegroundWindow())
+        currentapp= psutil.Process(pid[-1]).name()
+        print(currentapp)
+        return psutil.Process(pid[-1]).name()
+
+    def run(self):
+        while True:
+            self.checkkeys()
+
+    def killprocess(self,processname):
+        for process in psutil.process_iter():
+            if process.name() == processname:
+                if not (processname in self.essentialprograms):
+                    print("ran")
+                    process.kill()
+                else:
+                    print("can't kill essential process!")
+
+if __name__ == "__main__":
+    longinus = brain()
+    longinus.run()
