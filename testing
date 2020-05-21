@@ -1,0 +1,78 @@
+from tkinter import *
+from config import settings
+import keyboard
+import psutil
+from win32gui import GetForegroundWindow
+from win32process import GetWindowThreadProcessId
+from config import settings
+
+
+def backtonormal(bruh):
+    ##print(bruh)
+    pass
+
+
+class maingui:
+    def __init__(self):
+        self.settings = settings()
+        self.essentialprograms = self.settings.essentialprograms
+        self.currentapp = ""
+        self.gui = Tk()
+        self.gui.title("Longinus")
+        self.consoleframe = Frame(self.gui)
+        self.consoleframe.pack(side=BOTTOM, fill=X)
+        self.consolelabel = Label(self.consoleframe, text="Console Output")
+        self.consolelabel.pack(side=TOP, fill=X)
+        self.consolemessage = "Awaiting Console Output..."
+        self.consoleoutput = Message(self.consoleframe, text=self.consolemessage, relief=SUNKEN, justify=CENTER,
+                                     aspect=10000)
+        self.consoleoutput.pack(side=BOTTOM, fill=X)
+        self.gui.bind("<FocusOut>", self.checkkeys)
+        self.gui.bind("<Map>", backtonormal)
+
+    def changemessage(self, message):
+        self.consoleoutput.configure(text=message)
+
+    def run(self):
+        while True:
+            if self.gui.winfo_exists():
+                self.gui.update()
+                self.gui.update_idletasks()
+
+    def mainloop(self):
+        self.gui.mainloop()
+
+    def checkkeys(self, *args):
+        if keyboard.is_pressed(self.settings.hotkey):
+            self.currentapp = self.findapplication()
+            self.killprocess(self.currentapp)
+        self.gui.after(0, self.checkkeys)
+
+    def findapplication(self):
+        pid = GetWindowThreadProcessId(GetForegroundWindow())
+        currentapp = psutil.Process(pid[-1]).name()
+        print(currentapp)
+        return psutil.Process(pid[-1]).name()
+
+    def run(self):
+        while True:
+            self.checkkeys()
+
+    def killprocess(self, processname):
+        for process in psutil.process_iter():
+            if process.name() == processname:
+                if not (processname in self.essentialprograms):
+                    ##print("ran")
+                    process.kill()
+                else:
+                 ##print("can't kill essential process!")
+                    pass
+
+    def update(self, *args):
+        self.gui.update()
+        self.gui.update_idletasks()
+
+
+if __name__ == '__main__':
+    n = maingui()
+    n.mainloop()
