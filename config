@@ -1,0 +1,5 @@
+class settings():
+    def __init__(self):
+        self.hotkey="ctrl+alt"
+        self.essentialprograms = ["explorer.exe", "ntoskrnl.exe", "sihost.exe", "winlogon.exe",
+                     "ApplicationFrameHost.exe"]
